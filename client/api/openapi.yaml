@@ -1,0 +1,221 @@
+openapi: 3.0.0
+info:
+  description: "Specification of the api described in [arXiv documentation](https://arxiv.org/help/api/user-manua)."
+  title: arXiv API
+  version: 0.0.1
+servers:
+- description: arxiv api.
+  url: http://export.arxiv.org
+paths:
+  /api/query:
+    get:
+      description: Optional extended description in CommonMark or HTML.
+      parameters:
+      - explode: true
+        in: query
+        name: search_query
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: query
+        name: id_list
+        required: false
+        schema:
+          items:
+            type: string
+          type: array
+        style: form
+      - explode: true
+        in: query
+        name: start
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: max_results
+        required: false
+        schema:
+          default: 10
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: sortBy
+        required: false
+        schema:
+          enum:
+          - relevance
+          - lastUpdatedDate
+          - submittedDate
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: sortOrder
+        required: false
+        schema:
+          enum:
+          - ascending
+          - descending
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/atom+xml; charset=utf-8:
+              encoding:
+                feed:
+                  contentType: application/atom+xml; charset=utf-8
+                  style: form
+              schema:
+                $ref: '#/components/schemas/feed'
+          description: arXiv flavored Atom feed
+      summary: Returns a list of users.
+      x-pagination:
+        offset:
+          offsetParam: start
+          limitParam: max_results
+          resultsPath: feed
+      x-accepts: application/atom+xml; charset=utf-8
+components:
+  schemas:
+    feed:
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        id:
+          type: string
+        updated:
+          type: string
+        link:
+          $ref: '#/components/schemas/link'
+        entry:
+          items:
+            $ref: '#/components/schemas/myentry'
+          type: array
+          xml:
+            name: entry
+        totalResults:
+          type: string
+          xml:
+            namespace: http://a9.com/-/spec/opensearch/1.1/
+            prefix: opensearch
+        startIndex:
+          type: string
+          xml:
+            namespace: http://a9.com/-/spec/opensearch/1.1/
+            prefix: opensearch
+        itemsPerPage:
+          type: string
+          xml:
+            namespace: http://a9.com/-/spec/opensearch/1.1/
+            prefix: opensearch
+      type: object
+      xml:
+        namespace: http://www.w3.org/2005/Atom
+    link:
+      properties:
+        href:
+          type: string
+          xml:
+            attribute: true
+        rel:
+          type: string
+          xml:
+            attribute: true
+        type:
+          type: string
+          xml:
+            attribute: true
+        title:
+          type: string
+          xml:
+            attribute: true
+      type: object
+    myentry:
+      properties:
+        title:
+          type: string
+        id:
+          type: string
+        published:
+          type: string
+        updated:
+          type: string
+        summary:
+          type: string
+        author:
+          items:
+            $ref: '#/components/schemas/author'
+          type: array
+        link:
+          items:
+            $ref: '#/components/schemas/link'
+          type: array
+        doi:
+          type: string
+          xml:
+            namespace: http://arxiv.org/schemas/atom
+            prefix: arxiv
+        comment:
+          type: string
+          xml:
+            namespace: http://arxiv.org/schemas/atom
+            prefix: arxiv
+        journal_ref:
+          type: string
+          xml:
+            namespace: http://arxiv.org/schemas/atom
+            prefix: arxiv
+        primary_category:
+          $ref: '#/components/schemas/myentry_primary_category'
+        category:
+          items:
+            $ref: '#/components/schemas/category'
+          type: array
+      type: object
+    category:
+      properties:
+        term:
+          type: string
+          xml:
+            attribute: true
+        scheme:
+          type: string
+          xml:
+            attribute: true
+      type: object
+    author:
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        affiliation:
+          type: string
+          xml:
+            namespace: http://arxiv.org/schemas/atom
+            prefix: arxiv
+      type: object
+    myentry_primary_category:
+      properties:
+        term:
+          type: string
+          xml:
+            attribute: true
+        scheme:
+          type: string
+          xml:
+            attribute: true
+      type: object
+      xml:
+        namespace: http://arxiv.org/schemas/atom
+        prefix: arxiv
+
