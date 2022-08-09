@@ -13,7 +13,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.github.nicholasphair</groupId>
+      <groupId>io.github.nicholasphair.arxiv</groupId>
       <artifactId>arxiv-java-client</artifactId>
     </dependency>
     <dependency>

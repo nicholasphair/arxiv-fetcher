@@ -33,6 +33,7 @@ public class Fetcher
                 // TODO: Write out the repo
 
                 if(page*maxResults >= Integer.parseInt(response.getTotalResults())) {
+                    System.out.println(String.format("query returned %s results", response.getTotalResults()));
                     break;
                 }
 
